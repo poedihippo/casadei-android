@@ -1,7 +1,7 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
 package com.albatech.casadei.ui.screens
-
+import android.util.Log
 import android.util.Patterns
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -65,7 +65,6 @@ fun LoginScreen(
                 textStyle = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.fillMaxWidth()
             )
-
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
@@ -99,11 +98,15 @@ fun LoginScreen(
             AppButton(
                 text = "Login",
                 onClick = {
+                    // console.log versi Android
+                    Log.d("Login", "email=$email, password=${"*".repeat(password.length)}")
+                    // kalau bener-bener pengin liat isi password (jangan di prod):
+                    // Log.d("Login", "email=$email, password=$password")
+
+                    // lanjut logic kamu
                     loading = true
-                    // validasi simple; ganti dengan call ViewModel/Retrofit nanti
                     if (formValid) onSuccess() else {
-                        // show error
-                        // jangan LaunchedEffect di onClick, langsung panggil suspend via rememberCoroutineScope kalau mau
+                        // show snackbar atau apapun
                     }
                     loading = false
                 },

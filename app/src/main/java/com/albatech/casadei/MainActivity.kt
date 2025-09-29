@@ -8,7 +8,7 @@ import androidx.compose.material3.Surface
 import com.albatech.casadei.ui.theme.AppTheme
 import androidx.compose.material3.MaterialTheme
 import com.albatech.casadei.ui.screens.LoginScreen
-// kalau udah pakai nav: import com.albatech.casadei.nav.AppNav
+import com.albatech.casadei.nav.AppNav
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,11 +18,7 @@ class MainActivity : ComponentActivity() {
             AppTheme(darkTheme = isSystemInDarkTheme(), dynamicColor = true) {
                 // Surface biar background ngikut tema (important!)
                 Surface(color = MaterialTheme.colorScheme.background) {
-                    // kalau belum pakai nav:
-                    LoginScreen(onSuccess = { /* TODO: navigate */ })
-
-                    // kalau udah pakai Navigation Compose, ganti ke ini:
-                    // AppNav()
+                    AppNav()
                 }
             }
         }
