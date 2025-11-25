@@ -49,7 +49,7 @@ fun AppButtonOutlined(
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = MaterialTheme.colorScheme.primary
         ),
-        border = ButtonDefaults.outlinedButtonBorder(), // ← cukup ini, tanpa copy
+        border = ButtonDefaults.outlinedButtonBorder(),
         modifier = modifier
     ) {
         Text(text, style = MaterialTheme.typography.labelLarge)

@@ -18,6 +18,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.dp
 import com.albatech.casadei.ui.atoms.AppButton
 import com.albatech.casadei.ui.theme.LocalSpacing
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import com.albatech.casadei.core.network.NetworkClient
+import com.albatech.casadei.api.auth.LoginRequestDto
 
 @Composable
 fun LoginScreen(
@@ -29,6 +33,7 @@ fun LoginScreen(
     var loading by remember { mutableStateOf(false) }
     val snackbar = remember { SnackbarHostState() }
     var show by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     val emailError = email.isNotBlank() && !Patterns.EMAIL_ADDRESS.matcher(email).matches()
     val passError = password.isNotBlank() && password.length < 6
@@ -98,16 +103,36 @@ fun LoginScreen(
             AppButton(
                 text = "Login",
                 onClick = {
-                    // console.log versi Android
                     Log.d("Login", "email=$email, password=${"*".repeat(password.length)}")
-                    // kalau bener-bener pengin liat isi password (jangan di prod):
-                    // Log.d("Login", "email=$email, password=$password")
-
-                    // lanjut logic kamu
                     loading = true
-                    if (formValid) onSuccess() else {
-                        // show snackbar atau apapun
+                    scope.launch {
+                        loading = true
+                        try {
+                            // 🔥 Call API login di sini
+                            val res = NetworkClient.authApi.login(
+                                LoginRequestDto(
+                                    email = email,
+                                    password = password
+                                )
+                            )
+
+                            val token = res.data.access_token
+                            Log.d("Login", "Token: $token")
+
+                            // TODO: nanti simpan token ke DataStore di sini
+
+                            onSuccess()
+                        } catch (e: Exception) {
+                            Log.e("Login", "Login error", e)
+                            snackbar.showSnackbar(
+                                e.message ?: "Login gagal, coba lagi."
+                            )
+                        } finally {
+                            loading = false
+                        }
                     }
+
+
                     loading = false
                 },
                 loading = loading,
