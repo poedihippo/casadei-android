@@ -22,7 +22,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import com.albatech.casadei.core.network.NetworkClient
 import com.albatech.casadei.api.auth.LoginRequestDto
-
+import androidx.compose.ui.platform.LocalContext
+import androidx.datastore.preferences.core.edit
+import com.albatech.casadei.core.auth.AuthPrefsKeys
+import com.albatech.casadei.core.auth.authDataStore
 @Composable
 fun LoginScreen(
     onSuccess: () -> Unit
@@ -34,7 +37,7 @@ fun LoginScreen(
     val snackbar = remember { SnackbarHostState() }
     var show by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-
+    val context = LocalContext.current
     val emailError = email.isNotBlank() && !Patterns.EMAIL_ADDRESS.matcher(email).matches()
     val passError = password.isNotBlank() && password.length < 6
     val formValid = email.isNotBlank() && !emailError && password.isNotBlank() && !passError
@@ -115,12 +118,17 @@ fun LoginScreen(
                                     password = password
                                 )
                             )
-
                             val token = res.data.access_token
                             Log.d("Login", "Token: $token")
-
+                            scope.launch {
+                                context.authDataStore.edit { prefs ->
+                                    prefs[AuthPrefsKeys.ACCESS_TOKEN] = token
+                                }
+                            }
                             // TODO: nanti simpan token ke DataStore di sini
-
+                            snackbar.showSnackbar(
+                                "Login success brow"
+                            )
                             onSuccess()
                         } catch (e: Exception) {
                             Log.e("Login", "Login error", e)
